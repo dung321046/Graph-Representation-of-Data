@@ -6,7 +6,7 @@ import networkx as nx
 import math
 
 
-def draw_graph(path, prefix, config, record_filter, edges_by_name, names, types, value_att, criteria, FONT_SCALE):
+def draw_graph(path, prefix, config, edges_by_name, names, types, value_att, FONT_SCALE):
     G = nx.DiGraph()
     G.add_edges_from(edges_by_name)
 
@@ -45,13 +45,11 @@ def draw_graph(path, prefix, config, record_filter, edges_by_name, names, types,
     ax = f.add_subplot(1, 1, 1)
     r = list(pos.values())[0]
     for label, type in JP_Legend_dict.items():
-        if types == ROOT_TYPE and "acc_name" in record_filter:
-            continue
         ax.plot([r[0]], [r[1]], color=Color_types[type], alpha=0.4, marker='o', label=label)
     ax.plot([r[0]], [r[1]], color=Color_types[ROOT_TYPE], marker='o')
     plt.axis('off')
     f.set_facecolor('w')
     plt.legend(prop={'size': font_size})
     f.tight_layout()
-    plt.savefig(path + "/" + prefix + "-" + config + criteria, dpi=dpi)
+    plt.savefig(path + "/" + prefix + "-" + config, dpi=dpi)
     plt.close()
