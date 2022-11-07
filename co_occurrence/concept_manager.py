@@ -16,12 +16,30 @@ class ConceptManager:
         self.loc_dict = dict()
         self.form_dict = dict()
 
+    def update_noun_chunks(self, tokens, index):
+        for nc in tokens.noun_chunks:
+            word = nc.text
+            # print(word)
+            concept = NOUN_TYPE + word
+            if concept not in self.loc_dict:
+                self.loc_dict[concept] = {index}
+                self.form_dict[concept] = {word}
+            else:
+                self.loc_dict[concept].add(index)
+                self.form_dict[concept].add(word)
+
     def update(self, tokens, index):
         start = 0
         end = 0
         n = len(tokens)
         while start < n - 1:
-            word = " ".join(tokens[start:end + 1].text)
+            while end < n - 1:
+                if tokens[start].pos_ == tokens[end + 1].pos_:
+                    end += 1
+                    continue
+                break
+            word = " ".join([t.text for t in tokens[start:end + 1]])
+            # print(word)
             concept = get_concept(word, tokens[start].pos_)
             if concept not in self.loc_dict:
                 self.loc_dict[concept] = {index}
@@ -29,8 +47,8 @@ class ConceptManager:
             else:
                 self.loc_dict[concept].add(index)
                 self.form_dict[concept].add(word)
-            start += 1
-            end += 1
+            start = end + 1
+            end = start
 
     def select_kw(self, prefix):
         sorted_dic = sorted(self.loc_dict.items(), key=lambda x: len(x[1]), reverse=True)
